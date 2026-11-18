@@ -1,0 +1,369 @@
+# PLACEHOLDER: replace app.id with the identifier created by `forge register`
+# before the first `forge deploy`. The zero id below is not a registered app.
+modules:
+  jira:issuePanel:
+    - key: precedents-panel
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: Precedents
+      icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
+  jira:issueAction:
+    - key: capture-decision
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: Capture as decision
+      viewportSize: large
+  jira:globalPage:
+    - key: decision-register
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: Decision Register
+      layout: native
+  confluence:contentBylineItem:
+    - key: precedents-byline
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: Precedents
+      tooltip: Recorded decisions for this content
+      description: Decisions linked to this page or blog
+      viewportSize: medium
+      icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
+  confluence:contextMenu:
+    - key: capture-from-selection
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: Capture as decision
+      description: Record a decision from the selected text
+      viewportSize: large
+  macro:
+    - key: precedent-macro
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: Decision
+      description: Embed a recorded engineering decision.
+      config:
+        resource: macro-config
+        render: native
+        viewportSize: medium
+        title: Choose a decision
+  bitbucket:repoPullRequestCard:
+    - key: precedents-pull-request
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: Precedents
+      icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
+  rovo:agent:
+    - key: precedent
+      name: Precedent
+      description: Cites recorded engineering decisions and nothing else.
+      prompt: |
+        You are Precedent. You answer questions about engineering decisions that were recorded in Precedent.
+
+        Rules:
+        1. Before answering a question about a decision, call searchDecisions, getDecision, or precedentsForIssue. Use precedentsForIssue when you know the Jira issue key. Use getDecision when the user names a key such as DEC-12. Otherwise call searchDecisions with the user's words.
+        2. Use only the fields those actions return. Do not invent a rationale, option, owner, date, or consequence. Do not answer from issue descriptions, page text, pull request diffs, or general knowledge.
+        3. Every statement about a decision must cite its key and title, for example DEC-2 (PostgreSQL for the billing service).
+        4. If the actions return no decisions, reply with exactly: No decision recorded
+        5. Prefer an accepted decision over a proposed one. When a decision is superseded, cite the successor and mention the older key only as history.
+        6. To record a decision, collect the title, problem, options, chosen option, and rationale, then call recordDecision. To attach work, call linkDecision. To replace a decision, call supersedeDecision with the successor key and a reason. Repeat the key the action returns.
+      conversationStarters:
+        - Why did we decide this?
+        - What precedent applies to this issue?
+        - Which decision replaced the old one?
+      actions:
+        - searchDecisions
+        - getDecision
+        - recordDecision
+        - linkDecision
+        - supersedeDecision
+        - precedentsForIssue
+      followUpPrompt: Ask about another decision key, or record one if none exists.
+  action:
+    - key: searchDecisions
+      name: Search decisions
+      function: search-decisions
+      actionVerb: GET
+      description: |
+        Search recorded engineering decisions. Returns only decisions the current user is allowed to see.
+        If no decision matches, the message is exactly "No decision recorded". Do not answer from any other source.
+      inputs:
+        query:
+          title: Query
+          type: string
+          required: false
+          description: Words from the user's question, such as the problem or the chosen option.
+        status:
+          title: Status
+          type: string
+          required: false
+          description: Optional status filter. One of proposed, accepted, superseded, or deprecated.
+    - key: getDecision
+      name: Get decision
+      function: get-decision
+      actionVerb: GET
+      description: |
+        Fetch one recorded decision by its key, for example DEC-12.
+        If that key is missing or not visible to the current user, the message is exactly "No decision recorded".
+      inputs:
+        decisionKey:
+          title: Decision key
+          type: string
+          required: true
+          description: The decision key, such as DEC-12.
+    - key: recordDecision
+      name: Record decision
+      function: record-decision
+      actionVerb: CREATE
+      description: |
+        Record a new engineering decision. Options are newline-separated and the chosen option must be one of them.
+        Status is proposed or accepted. Link fields are optional and must be supplied together.
+      inputs:
+        title:
+          title: Title
+          type: string
+          required: true
+          description: Short name of the decision.
+        problem:
+          title: Problem
+          type: string
+          required: true
+          description: The problem the decision resolves.
+        optionsConsidered:
+          title: Options considered
+          type: string
+          required: true
+          description: Options separated by newlines. The chosen option must appear in this list.
+        chosenOption:
+          title: Chosen option
+          type: string
+          required: true
+          description: The option the team chose. It must match one line of options considered.
+        rationale:
+          title: Rationale
+          type: string
+          required: true
+          description: Why the team chose this option.
+        consequences:
+          title: Consequences
+          type: string
+          required: false
+          description: Optional consequences of the decision.
+        status:
+          title: Status
+          type: string
+          required: false
+          description: proposed or accepted. Defaults to proposed.
+        ownerAccountIds:
+          title: Owner account IDs
+          type: string
+          required: false
+          description: Comma-separated Atlassian account IDs. Defaults to the current user.
+        linkType:
+          title: Link type
+          type: string
+          required: false
+          description: Optional. jiraIssue, confluencePage, or bitbucketPr.
+        linkId:
+          title: Link id
+          type: string
+          required: false
+          description: Issue key, numeric page id, or workspace/repo/pullRequestId.
+        linkUrl:
+          title: Link URL
+          type: string
+          required: false
+          description: HTTPS URL of the linked Jira issue, Confluence page, or Bitbucket pull request.
+    - key: linkDecision
+      name: Link decision
+      function: link-decision
+      actionVerb: UPDATE
+      description: |
+        Attach a Jira issue, Confluence page, or Bitbucket pull request to an existing decision.
+        A superseded decision cannot be changed.
+      inputs:
+        decisionKey:
+          title: Decision key
+          type: string
+          required: true
+          description: The decision key, such as DEC-12.
+        linkType:
+          title: Link type
+          type: string
+          required: true
+          description: jiraIssue, confluencePage, or bitbucketPr.
+        linkId:
+          title: Link id
+          type: string
+          required: true
+          description: Issue key, numeric page id, or workspace/repo/pullRequestId.
+        linkUrl:
+          title: Link URL
+          type: string
+          required: true
+          description: HTTPS URL of the work item.
+    - key: supersedeDecision
+      name: Supersede decision
+      function: supersede-decision
+      actionVerb: UPDATE
+      description: |
+        Mark a decision as superseded by another recorded decision. The successor must already exist,
+        must be proposed or accepted, and must not create a cycle. The superseded record becomes read-only.
+      inputs:
+        decisionKey:
+          title: Decision key
+          type: string
+          required: true
+          description: The decision key to supersede, such as DEC-5.
+        successorKey:
+          title: Successor key
+          type: string
+          required: true
+          description: The key of the decision that replaces it, such as DEC-6.
+        reason:
+          title: Reason
+          type: string
+          required: true
+          description: Why the earlier decision is no longer in force.
+    - key: precedentsForIssue
+      name: Precedents for issue
+      function: precedents-for-issue
+      actionVerb: GET
+      description: |
+        List recorded decisions relevant to a Jira issue the current user can view.
+        Shared links and the issue summary are used only to rank recorded decisions.
+        If none apply, the message is exactly "No decision recorded".
+      inputs:
+        issueKey:
+          title: Issue key
+          type: string
+          required: true
+          description: The Jira issue key, such as PAY-42.
+  rovo:mcp:
+    - key: precedent-mcp
+      name: Precedent
+      tools:
+        - searchDecisions
+        - getDecision
+        - recordDecision
+        - linkDecision
+        - supersedeDecision
+        - precedentsForIssue
+  scheduledTrigger:
+    - key: privacy-report
+      function: privacy-report
+      interval: week
+  function:
+    - key: resolver
+      handler: backend/resolver.handler
+    - key: search-decisions
+      handler: backend/actions.searchDecisions
+    - key: get-decision
+      handler: backend/actions.getDecision
+    - key: record-decision
+      handler: backend/actions.recordDecision
+    - key: link-decision
+      handler: backend/actions.linkDecision
+    - key: supersede-decision
+      handler: backend/actions.supersedeDecision
+    - key: precedents-for-issue
+      handler: backend/actions.precedentsForIssue
+    - key: privacy-report
+      handler: backend/privacy.reportStoredAccounts
+      timeoutSeconds: 120
+resources:
+  - key: main
+    path: src/frontend/index.tsx
+  - key: macro-config
+    path: src/frontend/macro-config.tsx
+permissions:
+  scopes:
+    - storage:app
+    - read:jira-work
+    - read:page:confluence
+    - read:pullrequest:bitbucket
+app:
+  runtime:
+    name: nodejs22.x
+    memoryMB: 512
+  id: "ari:cloud:ecosystem::app/00000000-0000-0000-0000-000000000000"
+  storage:
+    entities:
+      - name: decision
+        attributes:
+          bucket:
+            type: string
+          decisionKey:
+            type: string
+          title:
+            type: string
+          status:
+            type: string
+          problem:
+            type: string
+          optionsConsidered:
+            type: any
+          chosenOption:
+            type: string
+          rationale:
+            type: string
+          consequences:
+            type: string
+          ownerAccountIds:
+            type: any
+          links:
+            type: any
+          supersededBy:
+            type: string
+          supersedeReason:
+            type: string
+          createdAt:
+            type: string
+          updatedAt:
+            type: string
+          statusHistory:
+            type: any
+        indexes:
+          - decisionKey
+          - name: by-updated
+            partition:
+              - bucket
+            range:
+              - updatedAt
+          - name: by-status
+            partition:
+              - status
+            range:
+              - updatedAt
+      - name: decision-link
+        attributes:
+          linkKey:
+            type: string
+          decisionId:
+            type: string
+          updatedAt:
+            type: string
+        indexes:
+          - name: by-link
+            partition:
+              - linkKey
+            range:
+              - updatedAt
+          - name: by-decision
+            partition:
+              - decisionId
+            range:
+              - updatedAt
