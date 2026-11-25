@@ -1,5 +1,3 @@
-# PLACEHOLDER: replace app.id with the identifier created by `forge register`
-# before the first `forge deploy`. The zero id below is not a registered app.
 modules:
   jira:issuePanel:
     - key: precedents-panel
@@ -58,14 +56,6 @@ modules:
         render: native
         viewportSize: medium
         title: Choose a decision
-  bitbucket:repoPullRequestCard:
-    - key: precedents-pull-request
-      resource: main
-      resolver:
-        function: resolver
-      render: native
-      title: Precedents
-      icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
   rovo:agent:
     - key: precedent
       name: Precedent
@@ -105,12 +95,14 @@ modules:
           title: Query
           type: string
           required: false
-          description: Words from the user's question, such as the problem or the chosen option.
+          description: Words from the user's question, such as the problem or the chosen
+            option.
         status:
           title: Status
           type: string
           required: false
-          description: Optional status filter. One of proposed, accepted, superseded, or deprecated.
+          description: Optional status filter. One of proposed, accepted, superseded, or
+            deprecated.
     - key: getDecision
       name: Get decision
       function: get-decision
@@ -146,12 +138,14 @@ modules:
           title: Options considered
           type: string
           required: true
-          description: Options separated by newlines. The chosen option must appear in this list.
+          description: Options separated by newlines. The chosen option must appear in
+            this list.
         chosenOption:
           title: Chosen option
           type: string
           required: true
-          description: The option the team chose. It must match one line of options considered.
+          description: The option the team chose. It must match one line of options
+            considered.
         rationale:
           title: Rationale
           type: string
@@ -167,11 +161,6 @@ modules:
           type: string
           required: false
           description: proposed or accepted. Defaults to proposed.
-        ownerAccountIds:
-          title: Owner account IDs
-          type: string
-          required: false
-          description: Comma-separated Atlassian account IDs. Defaults to the current user.
         linkType:
           title: Link type
           type: string
@@ -186,7 +175,8 @@ modules:
           title: Link URL
           type: string
           required: false
-          description: HTTPS URL of the linked Jira issue, Confluence page, or Bitbucket pull request.
+          description: HTTPS URL of the linked Jira issue, Confluence page, or Bitbucket
+            pull request.
     - key: linkDecision
       name: Link decision
       function: link-decision
@@ -264,7 +254,7 @@ modules:
         - precedentsForIssue
   scheduledTrigger:
     - key: privacy-report
-      function: privacy-report
+      function: privacy-report-fn
       interval: week
   function:
     - key: resolver
@@ -281,7 +271,7 @@ modules:
       handler: backend/actions.supersedeDecision
     - key: precedents-for-issue
       handler: backend/actions.precedentsForIssue
-    - key: privacy-report
+    - key: privacy-report-fn
       handler: backend/privacy.reportStoredAccounts
       timeoutSeconds: 120
 resources:
@@ -294,12 +284,11 @@ permissions:
     - storage:app
     - read:jira-work
     - read:page:confluence
-    - read:pullrequest:bitbucket
 app:
   runtime:
     name: nodejs22.x
     memoryMB: 512
-  id: "ari:cloud:ecosystem::app/00000000-0000-0000-0000-000000000000"
+  id: ari:cloud:ecosystem::app/3abdb996-26d7-41f3-915d-5972097bd598
   storage:
     entities:
       - name: decision

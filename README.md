@@ -16,12 +16,11 @@ Screenshots belong here after the app is installed on a demonstration site. The 
 | Capture as decision | The issue action form |
 | Decision Register | Search, a status filter, and a superseded record |
 | Confluence | The byline, the selection menu, and the Decision macro |
-| Bitbucket | The pull request card |
 | Rovo | A cited answer, and a question that returns "No decision recorded" |
 
 ## Install
 
-The manifest ships with a placeholder app id. Register the app once, then deploy and install it on a site where you can administer Jira, Confluence, and Bitbucket. Rovo needs to be available on that site for the agent.
+The manifest carries the registered app id. To run your own copy, register a new app with `forge register` (it replaces `app.id`), then deploy and install it on a site where you can administer Jira and Confluence. Rovo needs to be available on that site for the agent. Forge does not allow Bitbucket workspace scopes in the same app as Jira and Confluence site scopes, so the Bitbucket pull request card is not part of this manifest. The code stays in `src/` for a separate Bitbucket app.
 
 ```bash
 npm install
@@ -32,7 +31,6 @@ forge deploy
 forge storage entities indexes list
 forge install --product jira --site example.atlassian.net --non-interactive
 forge install --product confluence --site example.atlassian.net --non-interactive
-forge install --product bitbucket --site example.atlassian.net --non-interactive
 ```
 
 Upgrade an existing installation after a manifest change with `forge install --upgrade`.
@@ -62,7 +60,6 @@ npm run seed:check
 | `confluence:contentBylineItem` | Precedents under the page title |
 | `confluence:contextMenu` | Capture as decision from selected text |
 | `macro` | A Decision body macro |
-| `bitbucket:repoPullRequestCard` | Precedents on the pull request |
 | `rovo:agent` | The Precedent agent and its six actions |
 | `rovo:mcp` | Those actions as MCP tools |
 | `scheduledTrigger` | Weekly account-id privacy report |

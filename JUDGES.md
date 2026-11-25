@@ -2,7 +2,7 @@
 
 Built and developed by Saddam Malik.
 
-This is a manual path for a site where Precedent is installed on Jira, Confluence, and Bitbucket, and Rovo is available. Replace the placeholder `app.id` and deploy before you start. Wait until `forge storage entities indexes list` shows the decision indexes as active.
+This is a manual path for a site where Precedent is installed on Jira and Confluence, and Rovo is available. Replace the placeholder `app.id` and deploy before you start. Wait until `forge storage entities indexes list` shows the decision indexes as active.
 
 ## 1. Decision Register (about 2 minutes)
 
