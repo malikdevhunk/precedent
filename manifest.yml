@@ -292,7 +292,7 @@ app:
     memoryMB: 512
   id: ari:cloud:ecosystem::app/3abdb996-26d7-41f3-915d-5972097bd598
   rovo:
-    tag: precednt
+    tag: decision
     description: Cites recorded engineering decisions by key, with tools to record, link, and supersede them.
     keywords:
       - decisions
