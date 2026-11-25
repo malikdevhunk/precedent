@@ -2,7 +2,7 @@
 
 Built and developed by Saddam Malik.
 
-This is a manual path for a site where Precedent is installed on Jira and Confluence, and Rovo is available. Replace the placeholder `app.id` and deploy before you start. Wait until `forge storage entities indexes list` shows the decision indexes as active.
+This is a manual path for a site where Precedent is installed on Jira and Confluence, and Rovo is available. Install through the link on the submission page. If you deploy your own copy instead, wait until `forge storage entities indexes list` shows the decision indexes as active.
 
 ## 1. Decision Register (about 2 minutes)
 
@@ -28,13 +28,12 @@ From the issue's more actions menu, choose **Capture as decision**. Record a sma
 
 In the Decision Register, open that new decision and mark it superseded by DEC-2, with a reason. The new record should become read-only and name DEC-2.
 
-## 3. Confluence and Bitbucket (about 2 minutes)
+## 3. Confluence (about 2 minutes)
 
 On a page you can edit, the byline item Precedents lists decisions linked to that page. Select a sentence and choose **Capture as decision**. The problem field should start with the sentence you selected.
 
 Insert the Decision macro and choose DEC-2. The page should show the key, the status, the chosen option, and the rationale. A viewer who cannot see a decision's only linked work sees **No decision recorded** instead of the title.
 
-Open a pull request. The Precedents card uses the pull request and any issue keys in the title, description, or branch. **Load demo on this work** links DEC-8, Two reviewers on payment changes.
 
 ## 4. Rovo (about 3 minutes)
 

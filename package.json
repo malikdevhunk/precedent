@@ -2,7 +2,7 @@
   "name": "precedent",
   "version": "1.0.0",
   "private": true,
-  "description": "Decision memory for Jira, Confluence, and Bitbucket. Built and developed by Saddam Malik.",
+  "description": "Decision memory for Jira and Confluence. Built and developed by Saddam Malik.",
   "author": "Saddam Malik <350492721+malikdevhunk@users.noreply.github.com>",
   "license": "MIT",
   "engines": {

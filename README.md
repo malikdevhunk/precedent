@@ -1,6 +1,6 @@
 # Precedent
 
-Precedent turns an engineering decision into a record the team can find again. A developer captures the problem, the options, the choice, and the rationale. Precedent then shows the decisions that relate to the Jira issue, Confluence page, or Bitbucket pull request in front of them.
+Precedent turns an engineering decision into a record the team can find again. A developer captures the problem, the options, the choice, and the rationale. Precedent then shows the decisions that relate to the Jira issue or Confluence page in front of them.
 
 The Rovo agent **Precedent — decision memory** answers "why did we decide this?" only from those records. It cites the decision key, such as DEC-12. When nothing was recorded, it says **No decision recorded**. The same actions are available to custom Rovo agents through the `rovo:mcp` module.
 
@@ -67,7 +67,7 @@ npm run seed:check
 ## Architecture
 
 ```
-Jira, Confluence, Bitbucket, Rovo
+Jira, Confluence, Rovo
         |
         v
 UI Kit screens and action handlers
@@ -92,14 +92,13 @@ Storage is two custom entities plus a sequence key, all through `@forge/kvs`. De
 
 ## Permissions
 
-The app asks for four scopes:
+The app asks for three scopes:
 
 | Scope | Why |
 | --- | --- |
 | `storage:app` | Read and write the decision store |
 | `read:jira-work` | See whether the current user can view a linked issue, and read the summary used only to rank records |
 | `read:page:confluence` | See whether the current user can view a linked page |
-| `read:pullrequest:bitbucket` | See whether the current user can view a linked pull request, and read the title, description, and branch for issue keys |
 
 There is no egress permission. Names and avatars are not stored. The UI Kit `User` component resolves an owner from the account id at render time, under that person's privacy settings.
 
@@ -109,4 +108,4 @@ Details of account-id handling are in [PRIVACY.md](PRIVACY.md). A ten-minute pas
 
 ## What a real site still has to prove
 
-`app.id` is a placeholder until `forge register`. Deploy, indexing, install, and the Rovo conversation all need a developer site. Product permission checks are real `asUser()` requests, so they are covered here by the pure filter and by the request each resolver makes, not by an automated call to Jira.
+Deploy, indexing, install, and the Rovo conversation all need a developer site. Product permission checks are real `asUser()` requests, so they are covered here by the pure filter and by the request each resolver makes, not by an automated call to Jira.

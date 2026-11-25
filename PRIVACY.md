@@ -12,9 +12,9 @@ Owners are stored as Atlassian account ids only. Precedent does not store displa
 
 ## Who can see a decision
 
-Every product read uses `asUser()`, so Jira, Confluence, and Bitbucket apply the viewer's own permissions.
+Every product read uses `asUser()`, so Jira and Confluence apply the viewer's own permissions.
 
-- The app can read an issue only with `read:jira-work`, a page only with `read:page:confluence`, and a pull request only with `read:pullrequest:bitbucket`.
+- The app can read an issue only with `read:jira-work`, and a page only with `read:page:confluence`.
 - If a request does not succeed, the link is treated as not visible.
 - Links the viewer cannot open are removed from the decision before it is returned.
 - If the viewer cannot open any of the decision's links, the whole decision is omitted. The title is not returned. The UI, the Rovo agent, and the MCP actions all use that filtered result, and a hidden decision is indistinguishable from a missing one: "No decision recorded".
@@ -39,4 +39,4 @@ If a later version stores anything beyond the account id, that version has to re
 
 ## What this document does not replace
 
-Installing the app still shows the site admin the four scopes in the manifest: `storage:app`, `read:jira-work`, `read:page:confluence`, and `read:pullrequest:bitbucket`. A production listing would also answer Atlassian's privacy questionnaire from this behavior.
+Installing the app still shows the site admin the three scopes in the manifest: `storage:app`, `read:jira-work`, and `read:page:confluence`. A production listing would also answer Atlassian's privacy questionnaire from this behavior.
