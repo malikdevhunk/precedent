@@ -58,22 +58,24 @@ modules:
         title: Choose a decision
   rovo:agent:
     - key: precedent
-      name: Precedent
-      description: Cites recorded engineering decisions and nothing else.
+      name: Precedent — decision memory
+      description: Cites recorded engineering decisions by key and title. Never answers from general knowledge.
       prompt: |
-        You are Precedent. You answer questions about engineering decisions that were recorded in Precedent.
+        You are Precedent — decision memory, a Forge agent for recorded engineering decisions.
+
+        You only answer from decisions stored in Precedent. You are not the default Rovo assistant. Do not use issue descriptions, page text, pull request diffs, or general knowledge.
 
         Rules:
-        1. Before answering a question about a decision, call searchDecisions, getDecision, or precedentsForIssue. Use precedentsForIssue when you know the Jira issue key. Use getDecision when the user names a key such as DEC-12. Otherwise call searchDecisions with the user's words.
-        2. Use only the fields those actions return. Do not invent a rationale, option, owner, date, or consequence. Do not answer from issue descriptions, page text, pull request diffs, or general knowledge.
+        1. Before every answer about a decision, call searchDecisions, getDecision, or precedentsForIssue. Do not reply until the action has returned. Use precedentsForIssue when you know the Jira issue key. Use getDecision when the user names a key such as DEC-12. Otherwise call searchDecisions with the user's words.
+        2. Use only the fields those actions return. Do not invent a rationale, option, owner, date, or consequence.
         3. Every statement about a decision must cite its key and title, for example DEC-2 (PostgreSQL for the billing service).
         4. If the actions return no decisions, reply with exactly: No decision recorded
         5. Prefer an accepted decision over a proposed one. When a decision is superseded, cite the successor and mention the older key only as history.
         6. To record a decision, collect the title, problem, options, chosen option, and rationale, then call recordDecision. To attach work, call linkDecision. To replace a decision, call supersedeDecision with the successor key and a reason. Repeat the key the action returns.
       conversationStarters:
-        - Why did we decide this?
+        - Why did we choose PostgreSQL for billing?
         - What precedent applies to this issue?
-        - Which decision replaced the old one?
+        - Which decision replaced Friday production deploys?
       actions:
         - searchDecisions
         - getDecision
@@ -244,7 +246,7 @@ modules:
           description: The Jira issue key, such as PAY-42.
   rovo:mcp:
     - key: precedent-mcp
-      name: Precedent
+      name: Precedent decision tools
       tools:
         - searchDecisions
         - getDecision
@@ -289,6 +291,13 @@ app:
     name: nodejs22.x
     memoryMB: 512
   id: ari:cloud:ecosystem::app/3abdb996-26d7-41f3-915d-5972097bd598
+  rovo:
+    tag: precednt
+    description: Cites recorded engineering decisions by key, with tools to record, link, and supersede them.
+    keywords:
+      - decisions
+      - precedent
+      - citations
   storage:
     entities:
       - name: decision

@@ -38,7 +38,7 @@ Open a pull request. The Precedents card uses the pull request and any issue key
 
 ## 4. Rovo (about 3 minutes)
 
-Open the Precedent agent.
+Open Rovo, search for **Precedent — decision memory**, and start a chat with that agent (not default Rovo).
 
 Ask: "Why did we choose PostgreSQL for billing?"
 

@@ -2,7 +2,7 @@
 
 Precedent turns an engineering decision into a record the team can find again. A developer captures the problem, the options, the choice, and the rationale. Precedent then shows the decisions that relate to the Jira issue, Confluence page, or Bitbucket pull request in front of them.
 
-The Rovo agent **Precedent** answers "why did we decide this?" only from those records. It cites the decision key, such as DEC-12. When nothing was recorded, it says **No decision recorded**. The same actions are available to custom Rovo agents through the `rovo:mcp` module.
+The Rovo agent **Precedent — decision memory** answers "why did we decide this?" only from those records. It cites the decision key, such as DEC-12. When nothing was recorded, it says **No decision recorded**. The same actions are available to custom Rovo agents through the `rovo:mcp` module.
 
 Built and developed by Saddam Malik.
 
@@ -60,8 +60,8 @@ npm run seed:check
 | `confluence:contentBylineItem` | Precedents under the page title |
 | `confluence:contextMenu` | Capture as decision from selected text |
 | `macro` | A Decision body macro |
-| `rovo:agent` | The Precedent agent and its six actions |
-| `rovo:mcp` | Those actions as MCP tools |
+| `rovo:agent` | The **Precedent — decision memory** agent and its six actions |
+| `rovo:mcp` | Those actions as MCP tools, exposed as **Precedent decision tools** |
 | `scheduledTrigger` | Weekly account-id privacy report |
 
 ## Architecture
